@@ -4,11 +4,11 @@
 	import { onMount } from 'svelte';
 	import { getHistoricalMarketData } from './api/resources';
 	
-	let coins = ['bitcoin', 'ethereum', 'binancecoin', 'cardano', 'poligon']
+	let coins = ['ethereum', 'bitcoin', 'binancecoin', 'cardano', 'dogecoin']
 	let currencies = ["usd", "eur", "ars"]
 	let currentCoin = coins[0];
 	let currentCurrency = currencies[0];
-	let days = 90;
+	let days = 30;
 
 	// se definen estas variables y sus valores se asignan en onMount
 	let prices = []; 
@@ -16,16 +16,16 @@
 	let labels = [];
 	let max_days; 
 	
-	function buildGraphData(labels, data) {
+	function buildGraphData(title, labels, data) {
 		const graphData = {
 			labels: labels, 
 			datasets: [
 				{
-					label: 'Prices',
+					label: title,
 					data: data,
 					fill: true,
-					backgroundColor: 'rgb(75, 192, 192)',
-					borderColor: 'rgb(29, 82, 82)',
+					backgroundColor: 'rgb(227, 121, 68)',
+					borderColor: 'rgb(66, 34, 17)',
 					tension: 0.3
 				},
 			]
@@ -45,20 +45,20 @@
 	}
 
 	$: labelsSlice = labels.slice(-days);
-	$: pricesData = buildGraphData(labelsSlice, prices.slice(-days));
-	$: volumeData = buildGraphData(labelsSlice, volume.slice(-days));
+	$: pricesData = buildGraphData("Price", labelsSlice, prices.slice(-days));
+	$: volumeData = buildGraphData("Traded Volume", labelsSlice, volume.slice(-days));
 
 	onMount(updateData);
 	
 </script>
 
 <main class="main">
-	<h1>COIN TRACKER</h1>
+	<h1>COIN <span class="coloured-title">TRACKER</span></h1>
 	<div>
 		<div class="inputs-container">
 			<div class="input-item">
-				<label for="days-input">Days back</label>
-				<input type="number" bind:value={days} name="days-input" max={max_days}>
+				<label for="days-input">Days</label>
+				<input class="days-input" type="number" bind:value={days} name="days-input" max={max_days}>
 			</div>
 			<div class="input-item">
 				<label for="coin-input">Coin</label>
@@ -70,18 +70,16 @@
 			</div>
 			<div class="input-item">
 				<label for="currency-input">Currency</label>
-				<select name="currency-select" id="currency-select" bind:value={currentCurrency} on:change={updateData}>
+				<select class="currency-select" name="currency-select" id="currency-select" bind:value={currentCurrency} on:change={updateData}>
 					{#each currencies as currency}
 						<option value={currency}>{currency}</option>
 					{/each}
 				</select>
 			</div>
 		</div>
-		<button class="btn-update" on:click={updateData}>Update</button>
 	</div>
 	<div class="graphs-section">
 		<div class="graph-container">
-			days {days}
 			<Line
 				data={pricesData}
 				width={100}
@@ -104,29 +102,52 @@
 	.main {
 		text-align: center;
 		padding: 20px;
-		width: 1100px;
+		max-width: 1100px;
 		margin: 0 auto;
+		font-family: Orbitron;
+		height: 100%;
 	}
 
 	h1 {
 		font-size: 60px;
 	}
 
+	.coloured-title {
+		background-image: linear-gradient(45deg, rgb(177, 148, 133), rgb(22, 24, 19) );
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent; 
+		-moz-background-clip: text;
+		-moz-text-fill-color: transparent;
+	}
+
 	.inputs-container {
 		display: flex;
 		justify-content: center;
+		margin-bottom: 40px;
 	}
 
+	label {
+		margin-bottom: 6px;
+	}
+	
 	.input-item {
 		margin: 0 10px
 	}
 
+	.input-item > input, select {
+		width: 140px;
+	}
+
 	.graphs-section {
 		display: flex;
-		justify-content: space-between;
+		justify-content: center;
+		flex-wrap: wrap;
 	}
 
 	.graph-container {
 		width: 500px;
+		margin: 20px;
 	}
+
 </style>
