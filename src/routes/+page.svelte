@@ -6,8 +6,8 @@
     import Spinner from '../components/Spinner.svelte';
     import ErrorComponent from '../components/Error.svelte'
 	
-	let coins = ['ethereum', 'bitcoin', 'binancecoin', 'cardano', 'dogecoin']
-	let currencies = ["usd", "eur", "ars"]
+	const coins = ['ethereum', 'bitcoin', 'binancecoin', 'cardano', 'dogecoin']
+	const currencies = ["usd", "eur", "ars"]
 	let currentCoin = coins[0];
 	let currentCurrency = currencies[0];
 	let days = 30;
@@ -34,7 +34,7 @@
         // throw new Error("An error ocurred")
         return {
             prices: response.prices.map((p: number[]) => p[1]),
-            volume: response.total_volumes.map((p: number[]) => p[1]),
+            volume: response.total_volumes.map((v: number[]) => v[1]),
             labels: response.prices.map((p: number[]) => new Date(p[0]).toLocaleDateString("en-US")),
         };
     }
